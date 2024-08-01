@@ -5,6 +5,8 @@
     <title>Playground</title>
 </head>
 <body>
-<h2>Hello {{ name }}</h2>
+{% for q in query %}
+<li>{{ q.name }} {{ q.last_name }}</li>
+{% endfor %}
 </body>
 </html>
