@@ -1,5 +1,6 @@
+# admin.py
+
 from django.contrib import admin, messages
-from django.db.models import F, Value, Func
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -13,7 +14,7 @@ class UserPostFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         users_with_posts = models.User.objects.filter(post__isnull=False).distinct()
         sorted_users = sorted(users_with_posts, key=lambda user: (user.first_name, user.last_name))
-        return [(user.id, f"{user.first_name} {user.last_name}") for user in sorted_users]
+        return [(user.id, f"{user.first_name} {user.last_name} ({user.post_set.count()})") for user in sorted_users]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -28,7 +29,7 @@ class UserAddressFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         users_with_address = models.User.objects.filter(address__isnull=False).distinct()
         sorted_users = sorted(users_with_address, key=lambda user: (user.first_name, user.last_name))
-        return [(user.id, f"{user.first_name} {user.last_name}") for user in sorted_users]
+        return [(user.id, f"{user.first_name} {user.last_name} ({user.address_set.count()})") for user in sorted_users]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -43,7 +44,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ['last_name', 'first_name', 'email', 'phone', 'registered_at', 'post_amount']
     list_editable = ['email', 'phone']
     list_per_page = 10
-    search_fields = ['last_name__istartswith', 'name__istartswith']
+    search_fields = ['last_name__istartswith', 'first_name__istartswith', 'last_name', 'first_name']
 
     @admin.action(description='Clear post amount')
     def clear_post_amount(self, request, queryset):
@@ -65,10 +66,6 @@ class AddressAdmin(admin.ModelAdmin):
         url = reverse('admin:playground_user_change', args=[address.user.id])
         return format_html('<a href="{}">{}</a>', url,
                            address.user.first_name + ' ' + address.user.last_name)
-
-    def concat(self, user):
-        ann_concat = user.objects.annotate(
-            fullName=Func(F('first_name'), Value(' '), F('last_name'), function='CONCAT'))
 
 
 @admin.register(models.Post)
