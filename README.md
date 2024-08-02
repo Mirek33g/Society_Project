@@ -1,1 +1,1 @@
-# My first repo
+This app is for a local society to kep update all local people about all local events etc.
