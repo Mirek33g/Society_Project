@@ -1,15 +1,23 @@
 from rest_framework import serializers
-from .models import Address
+from .models import Address, Post, User
 
 
-class UserSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=255)
-    last_name = serializers.CharField(max_length=255)
-    phone = serializers.CharField(max_length=255)
-    user_address = serializers.PrimaryKeyRelatedField(
-        queryset=Address.objects.all()
-    )
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['id', 'address', 'user']
 
 
-class AddressSerializer(serializers.Serializer):
-    address = serializers.CharField(max_length=255)
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'description', 'post_type', 'placed_at', 'user']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    user_address = AddressSerializer(read_only=True)
+    user_post = PostSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone', 'user_address', 'user_post']

@@ -77,6 +77,7 @@ DATABASES = {
         'PASSWORD': '21560'
     }
 }
+# PASSWORD ADMIN: 456123zxc
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

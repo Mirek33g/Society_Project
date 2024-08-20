@@ -10,9 +10,9 @@ class UserPostFilter(admin.SimpleListFilter):
     parameter_name = 'user'
 
     def lookups(self, request, model_admin):
-        users_with_posts = models.User.objects.filter(post__isnull=False).distinct()
+        users_with_posts = models.User.objects.filter(posts__isnull=False).distinct()
         sorted_users = sorted(users_with_posts, key=lambda user: (user.first_name, user.last_name))
-        return [(user.id, f"{user.first_name} {user.last_name} ({user.post_set.count()})") for user in sorted_users]
+        return [(user.id, f"{user.first_name} {user.last_name} ({user.posts.count()})") for user in sorted_users]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -22,12 +22,12 @@ class UserPostFilter(admin.SimpleListFilter):
 
 class UserAddressFilter(admin.SimpleListFilter):
     title = _('User')
-    parameter_name = 'user_post'
+    parameter_name = 'user'
 
     def lookups(self, request, model_admin):
-        users_with_address = models.User.objects.filter(address__isnull=False).distinct()
+        users_with_address = models.User.objects.filter(addresses__isnull=False).distinct()
         sorted_users = sorted(users_with_address, key=lambda user: (user.first_name, user.last_name))
-        return [(user.id, f"{user.first_name} {user.last_name} ({user.address_set.count()})") for user in sorted_users]
+        return [(user.id, f"{user.first_name} {user.last_name} ({user.addresses.count()})") for user in sorted_users]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -49,7 +49,7 @@ class UserAdmin(admin.ModelAdmin):
         updated_count = queryset.update(post_amount=0)
         self.message_user(
             request,
-            f'{updated_count} post amount were successfully updated',
+            f'{updated_count} post amounts were successfully updated',
             messages.SUCCESS)
 
 

@@ -9,18 +9,23 @@ class User(models.Model):
         unique=True,
         null=True,
         blank=True,
-        validators=[EmailValidator(message='Enter a valid email address')])
-    phone = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True)
+        validators=[EmailValidator(message='Enter a valid email address')]
+    )
+    phone = models.CharField(max_length=255, null=True, blank=True)
     post_amount = models.IntegerField(null=True)
     registered_at = models.DateField(auto_now_add=True)
     user_address = models.ForeignKey(
         'Address',
         on_delete=models.CASCADE,
-        related_name='user_address',
-        null=True)
+        related_name='users',  # Zapewnia relację odwrotną z Address do User
+        null=True
+    )
+    user_post = models.ForeignKey(
+        'Post',
+        on_delete=models.CASCADE,
+        related_name='users',  # Zapewnia relację odwrotną z Post do User
+        null=True
+    )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -31,7 +36,7 @@ class User(models.Model):
 
 class Address(models.Model):
     address = models.TextField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
 
     def __str__(self):
         return self.address
@@ -51,7 +56,7 @@ class Post(models.Model):
     description = models.TextField()
     post_type = models.CharField(max_length=1, choices=CHOICES, default=POSITIVE)
     placed_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='posts')
 
     def __str__(self):
         return self.title

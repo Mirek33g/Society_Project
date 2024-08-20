@@ -1,1 +1,1 @@
-This app is for a local society to kep update all local people about all local events etc.
+This app is for a local society to keep updating all local users about any local events etc.
